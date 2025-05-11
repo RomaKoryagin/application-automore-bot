@@ -1,17 +1,41 @@
 package services
 
 import (
+	"log"
+
 	"alex.com/application-bot/internal/application/enums"
 	"alex.com/application-bot/internal/domain/entities"
 	"alex.com/application-bot/internal/infrastructure/repositories"
 )
 
 type ApplicationService struct {
-	ApplicationRepository repositories.ApplicationRepository
+	ApplicationRepository *repositories.ApplicationRepository
+	UserRepository        *repositories.UserRepository
 }
 
 func (service ApplicationService) GetLastByUserId(userId int) (*entities.Application, error) {
 	return service.ApplicationRepository.GetLastByUserId(userId)
+}
+
+func (service ApplicationService) GetLastByChatId(chatId int64) (*entities.Application, error) {
+	user, err := service.UserRepository.GetByChatId(chatId)
+	if err != nil {
+		log.Printf("error while getting user by chat_id, more: %s", err)
+		return nil, err
+	}
+
+	appl, err := service.ApplicationRepository.GetLastByUserId(user.ID)
+	if err != nil {
+		log.Printf("error while getting last application by user_id, more: %s", err)
+		return nil, err
+	}
+
+	if appl == nil {
+		log.Printf("there is no last application for user with id: %d", user.ID)
+		return nil, nil
+	}
+
+	return appl, nil
 }
 
 func (service ApplicationService) GetStepTypeByNumber(appl *entities.Application) enums.StepType {
@@ -46,6 +70,13 @@ func (service ApplicationService) CreateEmptyApplication(userId int) error {
 func (service ApplicationService) Update(appl *entities.Application) error {
 	return service.ApplicationRepository.Update(appl)
 }
-func NewApplicationService(applicationRepository repositories.ApplicationRepository) *ApplicationService {
-	return &ApplicationService{ApplicationRepository: applicationRepository}
+
+func NewApplicationService(
+	applicationRepository *repositories.ApplicationRepository,
+	userRepository *repositories.UserRepository,
+) *ApplicationService {
+	return &ApplicationService{
+		ApplicationRepository: applicationRepository,
+		UserRepository:        userRepository,
+	}
 }

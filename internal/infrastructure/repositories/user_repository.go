@@ -38,6 +38,6 @@ func (userRepository UserRepository) Create(chatId int64) (*int, error) {
 	return &id, nil
 }
 
-func NewUserRepository(connection *sql.DB) UserRepository {
-	return UserRepository{Connection: connection}
+func NewUserRepository(connection *sql.DB) *UserRepository {
+	return &UserRepository{Connection: connection}
 }

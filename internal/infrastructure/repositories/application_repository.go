@@ -13,7 +13,7 @@ type ApplicationRepository struct {
 }
 
 func (repo ApplicationRepository) GetLastByUserId(userId int) (*entities.Application, error) {
-	sql := `
+	query := `
 		select 
 			id, 
 			user_id, 
@@ -35,7 +35,7 @@ func (repo ApplicationRepository) GetLastByUserId(userId int) (*entities.Applica
 		limit 1
 	`
 
-	row := repo.Connection.QueryRow(sql, userId)
+	row := repo.Connection.QueryRow(query, userId)
 
 	var appl entities.Application
 
@@ -54,7 +54,11 @@ func (repo ApplicationRepository) GetLastByUserId(userId int) (*entities.Applica
 		&appl.CreatedAt,
 		&appl.UpdatedAt,
 	)
+
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -184,6 +188,6 @@ func (repo ApplicationRepository) Update(appl *entities.Application) error {
 	return nil
 }
 
-func NewApplicationRepository(conn *sql.DB) ApplicationRepository {
-	return ApplicationRepository{Connection: conn}
+func NewApplicationRepository(conn *sql.DB) *ApplicationRepository {
+	return &ApplicationRepository{Connection: conn}
 }
