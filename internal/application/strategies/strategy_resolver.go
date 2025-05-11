@@ -2,6 +2,7 @@ package strategies
 
 import (
 	"alex.com/application-bot/internal/application/enums"
+	"alex.com/application-bot/internal/domain/entities"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -11,8 +12,13 @@ type IMessageStrategy interface {
 	GetKey() enums.StrategyType
 }
 
+type IStrategyResolverApplicationService interface {
+	GetLastByChatId(chatId int64) (*entities.Application, error)
+}
+
 type StrategyResolver struct {
-	strategies map[enums.StrategyType]IMessageStrategy
+	strategies         map[enums.StrategyType]IMessageStrategy
+	ApplicationService IStrategyResolverApplicationService
 }
 
 func (resolver StrategyResolver) AddStrategy(strategy IMessageStrategy) {
@@ -21,6 +27,15 @@ func (resolver StrategyResolver) AddStrategy(strategy IMessageStrategy) {
 
 func (resolver StrategyResolver) Resolve(chatId int64, text string) IMessageStrategy {
 	var sType enums.StrategyType = enums.UpdateApplication
+	appl, err := resolver.ApplicationService.GetLastByChatId(chatId)
+
+	if err != nil {
+		sType = enums.Error
+	}
+
+	if appl.Submitted.Bool && appl.Submitted.Valid {
+		sType = enums.NoActiveApplication
+	}
 
 	if text == "/start" {
 		sType = enums.Start
@@ -41,8 +56,9 @@ func (resolver StrategyResolver) Resolve(chatId int64, text string) IMessageStra
 	return resolver.strategies[sType]
 }
 
-func NewStrategyResolver() *StrategyResolver {
+func NewStrategyResolver(applicationService IStrategyResolverApplicationService) *StrategyResolver {
 	return &StrategyResolver{
-		strategies: make(map[enums.StrategyType]IMessageStrategy),
+		strategies:         make(map[enums.StrategyType]IMessageStrategy),
+		ApplicationService: applicationService,
 	}
 }

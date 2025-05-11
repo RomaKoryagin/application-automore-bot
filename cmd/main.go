@@ -40,7 +40,7 @@ func main() {
 
 	/** services */
 	userService := services.NewUserService(userRepository)
-	applicationService := services.NewApplicationService(applicationRepository)
+	applicationService := services.NewApplicationService(applicationRepository, userRepository)
 	/** end services */
 
 	/** factories */
@@ -52,17 +52,19 @@ func main() {
 	updateApplicationStrategy := strategies.NewUpdateApplicationStrategy(userService, applicationService, factoryResolver)
 	websiteComamandStrategy := strategies.NewWebsiteCommandStrategy()
 	aboutCommandStrategy := strategies.NewAboutCommandStrategy()
+	noActiveApplicationStrategy := strategies.NewNoActiveApplicationStrategy()
 	newApplicationStrategy := strategies.NewNewApplicationStrategy(userService, applicationService)
 	/** end strategies */
 
 	/** resolvers */
-	strategyResolver := strategies.NewStrategyResolver()
+	strategyResolver := strategies.NewStrategyResolver(applicationService)
 
 	strategyResolver.AddStrategy(startCommandStrategy)
 	strategyResolver.AddStrategy(updateApplicationStrategy)
 	strategyResolver.AddStrategy(websiteComamandStrategy)
 	strategyResolver.AddStrategy(aboutCommandStrategy)
 	strategyResolver.AddStrategy(newApplicationStrategy)
+	strategyResolver.AddStrategy(noActiveApplicationStrategy)
 	/** end resolvers */
 
 	telegramMessageService := services.NewTelegramMessageService(bot, strategyResolver)
