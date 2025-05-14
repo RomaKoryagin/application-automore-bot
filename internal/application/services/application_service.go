@@ -24,6 +24,10 @@ func (service ApplicationService) GetLastByChatId(chatId int64) (*entities.Appli
 		return nil, err
 	}
 
+	if user == nil {
+		return nil, nil
+	}
+
 	appl, err := service.ApplicationRepository.GetLastByUserId(user.ID)
 	if err != nil {
 		log.Printf("error while getting last application by user_id, more: %s", err)

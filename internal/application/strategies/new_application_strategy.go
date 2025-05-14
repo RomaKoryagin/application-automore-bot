@@ -12,6 +12,7 @@ import (
 
 type INewApplicationStrategyUserService interface {
 	GetByChatId(chatId int64) (*entities.User, error)
+	CreateByChatId(chatId int64) (*int, error)
 }
 
 type INewApplicationStrategyApplicationService interface {
@@ -31,10 +32,24 @@ func (strategy NewApplicationStrategy) Handle(chatId int64, text string) (*tgbot
 		return nil, err
 	}
 
-	err = strategy.ApplicationService.CreateEmptyApplication(user.ID)
-	if err != nil {
-		log.Printf("error while trying to create new empty application, more: %s", err)
-		return nil, err
+	if user == nil {
+		userId, err := strategy.UserService.CreateByChatId(chatId)
+		if err != nil {
+			log.Printf("error while trying to create new user, more: %s", err)
+			return nil, err
+		}
+
+		err = strategy.ApplicationService.CreateEmptyApplication(*userId)
+		if err != nil {
+			log.Printf("error while trying to create new empty application, more: %s", err)
+			return nil, err
+		}
+	} else {
+		err = strategy.ApplicationService.CreateEmptyApplication(user.ID)
+		if err != nil {
+			log.Printf("error while trying to create new empty application, more: %s", err)
+			return nil, err
+		}
 	}
 
 	return factories.CountryStepMessageFactory{}.CreateMessage(chatId), nil

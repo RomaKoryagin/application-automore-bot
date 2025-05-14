@@ -1,6 +1,8 @@
 package strategies
 
 import (
+	"log"
+
 	"alex.com/application-bot/internal/application/enums"
 	"alex.com/application-bot/internal/domain/entities"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -33,7 +35,7 @@ func (resolver StrategyResolver) Resolve(chatId int64, text string) IMessageStra
 		sType = enums.Error
 	}
 
-	if appl.Submitted.Bool && appl.Submitted.Valid {
+	if appl != nil && appl.Submitted.Bool && appl.Submitted.Valid {
 		sType = enums.NoActiveApplication
 	}
 
@@ -52,6 +54,8 @@ func (resolver StrategyResolver) Resolve(chatId int64, text string) IMessageStra
 	if text == "/about" {
 		sType = enums.About
 	}
+
+	log.Println("type " + sType)
 
 	return resolver.strategies[sType]
 }
