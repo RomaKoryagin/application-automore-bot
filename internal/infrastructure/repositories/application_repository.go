@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"alex.com/application-bot/internal/application/constants"
 	"alex.com/application-bot/internal/domain/entities"
 )
 
@@ -15,7 +16,9 @@ type ApplicationRepository struct {
 func (repo ApplicationRepository) GetLastByUserId(userId int) (*entities.Application, error) {
 	query := `
 		select 
-			id, 
+			id,
+			chat_id,
+			telegram_id,
 			user_id, 
 			country,
 			mark_or_conditions,
@@ -23,11 +26,12 @@ func (repo ApplicationRepository) GetLastByUserId(userId int) (*entities.Applica
 			steering_wheel_type,
 			city,
 			person_name,
-			person_phone,
 			submitted, 
 			step,
 			created_at, 
-			updated_at
+			updated_at,
+			sended_telegram,
+			sended_bitrix
 		from
 			applications 
 		where user_id = ?
@@ -41,6 +45,8 @@ func (repo ApplicationRepository) GetLastByUserId(userId int) (*entities.Applica
 
 	err := row.Scan(
 		&appl.ID,
+		&appl.ChatId,
+		&appl.TelegramId,
 		&appl.UserId,
 		&appl.Country,
 		&appl.MarkOrConditions,
@@ -49,10 +55,11 @@ func (repo ApplicationRepository) GetLastByUserId(userId int) (*entities.Applica
 		&appl.City,
 		&appl.PersonName,
 		&appl.PersonPhone,
-		&appl.Submitted,
 		&appl.Step,
 		&appl.CreatedAt,
 		&appl.UpdatedAt,
+		&appl.SendedToTelegram,
+		&appl.SendedToBitfix,
 	)
 
 	if err != nil {
@@ -76,7 +83,6 @@ func (repo ApplicationRepository) GetByUserId(userId int) ([]*entities.Applicati
 			steering_wheel_type,
 			city,
 			person_name,
-			person_phone,
 			submitted, 
 			step,
 			created_at, 
@@ -108,7 +114,6 @@ func (repo ApplicationRepository) GetByUserId(userId int) ([]*entities.Applicati
 			&appl.City,
 			&appl.PersonName,
 			&appl.PersonPhone,
-			&appl.Submitted,
 			&appl.Step,
 			&appl.CreatedAt,
 			&appl.UpdatedAt,
@@ -128,12 +133,13 @@ func (repo ApplicationRepository) GetByUserId(userId int) ([]*entities.Applicati
 	return applications, nil
 }
 
-func (repo ApplicationRepository) CreateEmpty(userdId int) error {
-	sql := `insert into applications(user_id, created_at, updated_at) values (?, datetime('now'), datetime('now'))`
+func (repo ApplicationRepository) CreateEmpty(userdId int, chatId int64, telegramId string) error {
+	sql := `insert into applications(user_id, chat_id, telegram_id, created_at, updated_at) values (?, ?, ?, datetime('now'), datetime('now'))`
 
-	_, err := repo.Connection.Exec(sql, userdId)
+	_, err := repo.Connection.Exec(sql, userdId, chatId, telegramId)
 
-	if err == nil {
+	if err != nil {
+		log.Printf("error while trying to create empty application, more: %s", err)
 		return err
 	}
 
@@ -151,9 +157,12 @@ func (repo ApplicationRepository) Update(appl *entities.Application) error {
             city = ?,
             person_name = ?,
             person_phone = ?,
-            submitted = ?,
             step = ?,
-            updated_at = datetime('now')
+            updated_at = datetime('now'),
+			sended_telegram = ?,
+			sended_bitrix = ?,
+			chat_id = ?,
+			telegram_id = ?
         where 
             id = ?
     `
@@ -166,8 +175,11 @@ func (repo ApplicationRepository) Update(appl *entities.Application) error {
 		appl.City,
 		appl.PersonName,
 		appl.PersonPhone,
-		appl.Submitted,
 		appl.Step,
+		appl.SendedToTelegram,
+		appl.SendedToBitfix,
+		appl.ChatId,
+		appl.TelegramId,
 		appl.ID,
 	)
 
@@ -186,6 +198,77 @@ func (repo ApplicationRepository) Update(appl *entities.Application) error {
 	}
 
 	return nil
+}
+
+func (repo ApplicationRepository) GetSubbmited() ([]*entities.Application, error) {
+	sql := `
+		select 
+			id, 
+			user_id, 
+			chat_id,
+			telegram_id,
+			country,
+			mark_or_conditions,
+			budget,
+			steering_wheel_type,
+			city,
+			person_name,
+			person_phone,
+			step,
+			created_at, 
+			updated_at,
+			sended_telegram,
+			sended_bitrix
+		from 
+			applications 
+		where step = ? and not sended_telegram
+	`
+
+	rows, err := repo.Connection.Query(sql, constants.MaxStepType)
+
+	if err != nil {
+		if rows != nil {
+			defer rows.Close()
+		}
+
+		return nil, err
+	}
+
+	var applications []*entities.Application
+
+	for rows.Next() {
+		var appl entities.Application
+		err := rows.Scan(
+			&appl.ID,
+			&appl.UserId,
+			&appl.ChatId,
+			&appl.TelegramId,
+			&appl.Country,
+			&appl.MarkOrConditions,
+			&appl.Budget,
+			&appl.SteeringWheelType,
+			&appl.City,
+			&appl.PersonName,
+			&appl.PersonPhone,
+			&appl.Step,
+			&appl.CreatedAt,
+			&appl.UpdatedAt,
+			&appl.SendedToTelegram,
+			&appl.SendedToBitfix,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		applications = append(applications, &appl)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return applications, nil
 }
 
 func NewApplicationRepository(conn *sql.DB) *ApplicationRepository {

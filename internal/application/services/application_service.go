@@ -50,8 +50,7 @@ func (service ApplicationService) GetStepTypeByNumber(appl *entities.Application
 		4: enums.MarkOrConditions,
 		5: enums.PersonName,
 		6: enums.PersonPhone,
-		7: enums.Submit,
-		8: enums.SubmittedApplication,
+		7: enums.SubmittedApplication,
 	}
 
 	step := stepNumberToTypeMap[appl.Step]
@@ -67,8 +66,12 @@ func (service ApplicationService) GetStepTypeByNumber(appl *entities.Application
 	return step
 }
 
-func (service ApplicationService) CreateEmptyApplication(userId int) error {
-	return service.ApplicationRepository.CreateEmpty(userId)
+func (service ApplicationService) GetSubbmited() ([]*entities.Application, error) {
+	return service.ApplicationRepository.GetSubbmited()
+}
+
+func (service ApplicationService) CreateEmptyApplication(userId int, chatId int64, telegramId string) error {
+	return service.ApplicationRepository.CreateEmpty(userId, chatId, telegramId)
 }
 
 func (service ApplicationService) Update(appl *entities.Application) error {
