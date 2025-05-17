@@ -17,7 +17,7 @@ type INewApplicationStrategyUserService interface {
 
 type INewApplicationStrategyApplicationService interface {
 	GetLastByUserId(userId int) (*entities.Application, error)
-	CreateEmptyApplication(userId int) error
+	CreateEmptyApplication(userId int, chatId int64, telegramId string) error
 }
 
 type NewApplicationStrategy struct {
@@ -25,7 +25,7 @@ type NewApplicationStrategy struct {
 	ApplicationService INewApplicationStrategyApplicationService
 }
 
-func (strategy NewApplicationStrategy) Handle(chatId int64, text string) (*tgbotapi.MessageConfig, error) {
+func (strategy NewApplicationStrategy) Handle(chatId int64, telegramId string, text string) (*tgbotapi.MessageConfig, error) {
 	user, err := strategy.UserService.GetByChatId(chatId)
 	if err != nil {
 		log.Printf("error while trying to get user by chat_id, more: %s", err)
@@ -39,13 +39,13 @@ func (strategy NewApplicationStrategy) Handle(chatId int64, text string) (*tgbot
 			return nil, err
 		}
 
-		err = strategy.ApplicationService.CreateEmptyApplication(*userId)
+		err = strategy.ApplicationService.CreateEmptyApplication(*userId, chatId, telegramId)
 		if err != nil {
 			log.Printf("error while trying to create new empty application, more: %s", err)
 			return nil, err
 		}
 	} else {
-		err = strategy.ApplicationService.CreateEmptyApplication(user.ID)
+		err = strategy.ApplicationService.CreateEmptyApplication(user.ID, chatId, telegramId)
 		if err != nil {
 			log.Printf("error while trying to create new empty application, more: %s", err)
 			return nil, err

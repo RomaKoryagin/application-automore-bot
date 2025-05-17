@@ -31,7 +31,7 @@ type UpdateApplicationStategy struct {
 	FactoryResolver    IUpdateApplicationFactoryResolver
 }
 
-func (strategy UpdateApplicationStategy) Handle(chatId int64, text string) (*tgbotapi.MessageConfig, error) {
+func (strategy UpdateApplicationStategy) Handle(chatId int64, telegramId string, text string) (*tgbotapi.MessageConfig, error) {
 	user, err := strategy.UserService.GetByChatId(chatId)
 	if err != nil {
 		log.Printf("error while getting user by chat_id, more: %s", err)
@@ -77,11 +77,6 @@ func (strategy UpdateApplicationStategy) Handle(chatId int64, text string) (*tgb
 		appl.PersonPhone = value
 	case enums.PersonName:
 		appl.PersonName = value
-	case enums.Submit:
-		if text == "Оставить контакт" {
-			appl.Submitted.Valid = true
-			appl.Submitted.Bool = true
-		}
 	}
 
 	isValid := true

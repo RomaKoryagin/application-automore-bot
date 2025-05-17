@@ -9,7 +9,7 @@ import (
 )
 
 type IMessageStrategy interface {
-	Handle(chatId int64, text string) (*tgbotapi.MessageConfig, error)
+	Handle(chatId int64, telegramId string, text string) (*tgbotapi.MessageConfig, error)
 
 	GetKey() enums.StrategyType
 }
@@ -35,8 +35,12 @@ func (resolver StrategyResolver) Resolve(chatId int64, text string) IMessageStra
 		sType = enums.Error
 	}
 
-	if appl != nil && appl.Submitted.Bool && appl.Submitted.Valid {
+	if appl != nil && appl.Step >= 7 {
 		sType = enums.NoActiveApplication
+	}
+
+	if text == "/menu" {
+		sType = enums.ShowMenu
 	}
 
 	if text == "/start" {

@@ -22,10 +22,10 @@ type TelegramMessageService struct {
 	StrategyResolver IStrategyResolver
 }
 
-func (service TelegramMessageService) SendReplyMessage(chatId int64, text string) {
+func (service TelegramMessageService) SendReplyMessage(chatId int64, telegramId string, text string) {
 	strategy := service.StrategyResolver.Resolve(chatId, text)
 
-	msg, _ := strategy.Handle(chatId, text)
+	msg, _ := strategy.Handle(chatId, telegramId, text)
 
 	service.Bot.Send(msg)
 }

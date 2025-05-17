@@ -13,4 +13,5 @@ const (
 	Submit               StepType = "Submit"
 	InvalidPhone         StepType = "InvalidPhone"
 	SubmittedApplication StepType = "SubmittedApplication"
+	Menu                 StepType = "Menu"
 )

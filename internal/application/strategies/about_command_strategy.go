@@ -9,7 +9,7 @@ import (
 type AboutCommandStrategy struct {
 }
 
-func (strategy AboutCommandStrategy) Handle(chatId int64, text string) (*tgbotapi.MessageConfig, error) {
+func (strategy AboutCommandStrategy) Handle(chatId int64, telegramId string, text string) (*tgbotapi.MessageConfig, error) {
 	return factories.AboutMessageFactory{}.CreateMessage(chatId), nil
 }
 

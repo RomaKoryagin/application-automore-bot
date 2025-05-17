@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"alex.com/application-bot/internal/application/factories"
+	"alex.com/application-bot/internal/application/jobs"
 	"alex.com/application-bot/internal/application/services"
 	"alex.com/application-bot/internal/application/strategies"
 	"alex.com/application-bot/internal/infrastructure/repositories"
@@ -15,6 +16,7 @@ import (
 )
 
 func main() {
+
 	executableFolderPath, _ := os.Getwd()
 
 	fmt.Println(executableFolderPath)
@@ -32,6 +34,8 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
+
+	telegramGroupName := os.Getenv("GROUP_TELEGRAM_CHAT_NAME")
 
 	/** repositories */
 	userRepository := repositories.NewUserRepository(db.Connection)
@@ -54,6 +58,7 @@ func main() {
 	aboutCommandStrategy := strategies.NewAboutCommandStrategy()
 	noActiveApplicationStrategy := strategies.NewNoActiveApplicationStrategy()
 	newApplicationStrategy := strategies.NewNewApplicationStrategy(userService, applicationService)
+	menuCommandStrategy := strategies.NewMenuCommandStrategy()
 	/** end strategies */
 
 	/** resolvers */
@@ -62,6 +67,7 @@ func main() {
 	strategyResolver.AddStrategy(startCommandStrategy)
 	strategyResolver.AddStrategy(updateApplicationStrategy)
 	strategyResolver.AddStrategy(websiteComamandStrategy)
+	strategyResolver.AddStrategy(menuCommandStrategy)
 	strategyResolver.AddStrategy(aboutCommandStrategy)
 	strategyResolver.AddStrategy(newApplicationStrategy)
 	strategyResolver.AddStrategy(noActiveApplicationStrategy)
@@ -76,11 +82,26 @@ func main() {
 
 	updates := bot.GetUpdatesChan(u)
 
-	for update := range updates {
-		if update.Message != nil {
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+	// @TODO
+	jobs.NewSendTelegramApplicationJob(applicationService, bot, telegramGroupName).Execute()
 
-			go telegramMessageService.SendReplyMessage(update.Message.Chat.ID, update.Message.Text)
+	for update := range updates {
+		var msg string
+		var chatId int64
+		var username string
+
+		if update.CallbackQuery != nil {
+			chatId = update.CallbackQuery.From.ID
+			msg = update.CallbackQuery.Data
+			username = update.CallbackQuery.From.UserName
 		}
+
+		if update.Message != nil {
+			msg = update.Message.Text
+			chatId = update.Message.Chat.ID
+			username = update.Message.From.UserName
+		}
+
+		go telegramMessageService.SendReplyMessage(chatId, username, msg)
 	}
 }

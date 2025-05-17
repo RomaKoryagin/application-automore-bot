@@ -10,14 +10,16 @@ type JapanWarningMessageFactory struct {
 func (factory JapanWarningMessageFactory) CreateMessage(chatId int64) *tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(chatId, "«Расположение руля автомобиля слева или справа? ⚠️ Внимание! ⚠️ У всех АВТО в Японии, рулевая колонка расположена справа. Поэтому, если вы хотите японский авто, но с рулевой колонкой, расположенной слева, то пройдите в раздел Корея или Китай.")
 
-	countriesKeyboard := tgbotapi.NewReplyKeyboard(
-		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("Вернуться к выбору страны"),
-			tgbotapi.NewKeyboardButton("Расположение руля справа"),
+	replyKeyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("Вернуться к выбору страны", "Вернуться к выбору страны"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("Расположение руля справа", "Расположение руля справа"),
 		),
 	)
 
-	msg.ReplyMarkup = countriesKeyboard
+	msg.ReplyMarkup = replyKeyboard
 
 	return &msg
 }

@@ -10,4 +10,5 @@ const (
 	NewApplication      StrategyType = "NewApplication"
 	Error               StrategyType = "Error"
 	NoActiveApplication StrategyType = "NoActiveApplication"
+	ShowMenu            StrategyType = "ShowMenu"
 )

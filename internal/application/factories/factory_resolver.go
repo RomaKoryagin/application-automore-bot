@@ -30,12 +30,12 @@ func (resolver FactoryResolver) Resolve(fType enums.StepType) (MessageFactory, e
 		return &PersonNameStepMessageFactory{}, nil
 	case enums.PersonPhone:
 		return &PersonPhoneStepMessageFactory{}, nil
-	case enums.Submit:
-		return &SubmitStepMessageFactory{}, nil
 	case enums.InvalidPhone:
 		return &InvalidPhoneMessageFactory{}, nil
 	case enums.SubmittedApplication:
 		return &SubmittedApplicationMessageFactory{}, nil
+	case enums.Menu:
+		return &MenuMessageFactory{}, nil
 	default:
 		return nil, errors.New("incorrent factory type found")
 	}

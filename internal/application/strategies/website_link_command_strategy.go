@@ -9,7 +9,7 @@ import (
 type WebsiteCommandStategy struct {
 }
 
-func (strategy WebsiteCommandStategy) Handle(chatId int64, text string) (*tgbotapi.MessageConfig, error) {
+func (strategy WebsiteCommandStategy) Handle(chatId int64, telegramId string, text string) (*tgbotapi.MessageConfig, error) {
 	return factories.WebsiteLinkMessageFactory{}.CreateMessage(chatId), nil
 }
 

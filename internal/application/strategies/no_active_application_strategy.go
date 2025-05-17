@@ -9,7 +9,7 @@ import (
 type NoActiveApplicationStrategy struct {
 }
 
-func (strategy NoActiveApplicationStrategy) Handle(chatId int64, text string) (*tgbotapi.MessageConfig, error) {
+func (strategy NoActiveApplicationStrategy) Handle(chatId int64, telegramId string, text string) (*tgbotapi.MessageConfig, error) {
 	return factories.NewNoActiveApplicationMessageFactory().CreateMessage(chatId), nil
 }
 

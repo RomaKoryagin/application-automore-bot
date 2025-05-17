@@ -11,7 +11,7 @@ import (
 )
 
 type IApplicationService interface {
-	CreateEmptyApplication(userId int) error
+	CreateEmptyApplication(userId int, chatId int64, telegramId string) error
 }
 
 type IUserService interface {
@@ -25,7 +25,7 @@ type StartCommandStategy struct {
 }
 
 // @TODO add transaction
-func (strategy StartCommandStategy) Handle(chatId int64, text string) (*tgbotapi.MessageConfig, error) {
+func (strategy StartCommandStategy) Handle(chatId int64, telegramId string, text string) (*tgbotapi.MessageConfig, error) {
 	user, err := strategy.UserService.GetByChatId(chatId)
 	if err != nil {
 		log.Println(err)
@@ -43,14 +43,14 @@ func (strategy StartCommandStategy) Handle(chatId int64, text string) (*tgbotapi
 			return nil, errors.New("created user id is undefined")
 		}
 
-		err = strategy.ApplicationService.CreateEmptyApplication(*userId)
+		err = strategy.ApplicationService.CreateEmptyApplication(*userId, chatId, telegramId)
 		if err != nil {
 			return nil, err
 		}
 	} else {
 		userId := &user.ID
 
-		err = strategy.ApplicationService.CreateEmptyApplication(*userId)
+		err = strategy.ApplicationService.CreateEmptyApplication(*userId, chatId, telegramId)
 
 		if err != nil {
 			return nil, err
