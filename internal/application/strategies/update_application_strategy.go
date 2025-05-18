@@ -2,6 +2,7 @@ package strategies
 
 import (
 	"database/sql"
+	"errors"
 	"log"
 	"regexp"
 
@@ -45,7 +46,7 @@ func (strategy UpdateApplicationStategy) Handle(chatId int64, telegramId string,
 	}
 
 	if appl == nil {
-		// @TODO create appliction or think what should we do in this case
+		return nil, errors.New("application now found")
 	}
 
 	stepType := strategy.ApplicationService.GetStepTypeByNumber(appl)

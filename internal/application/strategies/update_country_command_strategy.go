@@ -1,6 +1,7 @@
 package strategies
 
 import (
+	"errors"
 	"log"
 
 	"alex.com/application-bot/internal/application/enums"
@@ -41,7 +42,7 @@ func (strategy *UpdateCountryCommandStrategy) Handle(chatId int64, telegramId st
 	}
 
 	if appl == nil {
-		// @TODO create appliction or think what should we do in this case
+		return nil, errors.New("application now found")
 	}
 
 	stepType := strategy.ApplicationService.GetStepTypeByNumber(appl)
