@@ -8,7 +8,7 @@ type AboutMessageFactory struct {
 }
 
 func (factory AboutMessageFactory) CreateMessage(chatId int64) *tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(chatId, "Здесь будет описание компании, скоро мы его добавим...")
+	msg := tgbotapi.NewMessage(chatId, "Два адреса:\n\t1. г. Владивосток, ул. Коммунаров, 21 \n\t2. г. Артем, ул. Урбанского, 9")
 
 	replyKeyboard := tgbotapi.NewRemoveKeyboard(true)
 	msg.ReplyMarkup = replyKeyboard
