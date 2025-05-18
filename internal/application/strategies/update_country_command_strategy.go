@@ -28,11 +28,13 @@ type UpdateCountryCommandStrategy struct {
 func (strategy *UpdateCountryCommandStrategy) Handle(chatId int64, telegramId string, text string) (*tgbotapi.MessageConfig, error) {
 	user, err := strategy.UserService.GetByChatId(chatId)
 
-	log.Println("after getting user")
-
 	if err != nil {
 		log.Printf("error while getting user by chat_id, more: %s", err)
 		return nil, err
+	}
+
+	if user == nil {
+		return nil, errors.New("error user not found")
 	}
 
 	appl, err := strategy.ApplicationService.GetLastByUserId(user.ID)

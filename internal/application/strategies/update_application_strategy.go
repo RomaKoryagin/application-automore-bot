@@ -38,6 +38,9 @@ func (strategy UpdateApplicationStategy) Handle(chatId int64, telegramId string,
 		log.Printf("error while getting user by chat_id, more: %s", err)
 		return nil, err
 	}
+	if user == nil {
+		return nil, errors.New("user not found")
+	}
 
 	appl, err := strategy.ApplicationService.GetLastByUserId(user.ID)
 	if err != nil {
