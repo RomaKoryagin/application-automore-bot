@@ -23,7 +23,7 @@ func (builder *ApplicationMessageBuilder) ConfigureApplicationText(appl *entitie
 
 	text += fmt.Sprintf("\nНомер телефона: +%s", appl.PersonPhone.String)
 
-	text += fmt.Sprintf("\n\nТелегам ID: @%s", appl.TelegramId)
+	text += fmt.Sprintf("\n\nТелеграм ID: @%s", appl.TelegramId)
 
 	text += fmt.Sprintf("\nГород: %s", appl.City.String)
 
