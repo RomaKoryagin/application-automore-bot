@@ -26,7 +26,7 @@ func (repo ApplicationRepository) GetLastByUserId(userId int) (*entities.Applica
 			steering_wheel_type,
 			city,
 			person_name,
-			submitted, 
+			person_phone,
 			step,
 			created_at, 
 			updated_at,
@@ -70,67 +70,6 @@ func (repo ApplicationRepository) GetLastByUserId(userId int) (*entities.Applica
 	}
 
 	return &appl, nil
-}
-
-func (repo ApplicationRepository) GetByUserId(userId int) ([]*entities.Application, error) {
-	sql := `
-		select 
-			id, 
-			user_id, 
-			country,
-			mark_or_conditions,
-			budget,
-			steering_wheel_type,
-			city,
-			person_name,
-			submitted, 
-			step,
-			created_at, 
-			updated_at 
-		from 
-			applications 
-		where user_id = ?
-	`
-
-	rows, err := repo.Connection.Query(sql, userId)
-
-	if err != nil {
-		defer rows.Close()
-
-		return nil, err
-	}
-
-	var applications []*entities.Application
-
-	for rows.Next() {
-		var appl entities.Application
-		err := rows.Scan(
-			&appl.ID,
-			&appl.UserId,
-			&appl.Country,
-			&appl.MarkOrConditions,
-			&appl.Budget,
-			&appl.SteeringWheelType,
-			&appl.City,
-			&appl.PersonName,
-			&appl.PersonPhone,
-			&appl.Step,
-			&appl.CreatedAt,
-			&appl.UpdatedAt,
-		)
-
-		if err != nil {
-			return nil, err
-		}
-
-		applications = append(applications, &appl)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return applications, nil
 }
 
 func (repo ApplicationRepository) CreateEmpty(userdId int, chatId int64, telegramId string) error {
