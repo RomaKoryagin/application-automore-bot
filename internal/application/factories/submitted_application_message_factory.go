@@ -8,7 +8,7 @@ type SubmittedApplicationMessageFactory struct {
 }
 
 func (factory SubmittedApplicationMessageFactory) CreateMessage(chatId int64) *tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(chatId, "Спасибо ! Ваша заявка принята в работу")
+	msg := tgbotapi.NewMessage(chatId, "Спасибо ! Ваша заявка принята в работу. В ближайшее время, наш менеджер свяжется с Вами")
 
 	replyKeyboard := tgbotapi.NewRemoveKeyboard(true)
 	msg.ReplyMarkup = replyKeyboard
