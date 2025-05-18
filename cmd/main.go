@@ -89,7 +89,5 @@ func main() {
 
 	router.POST("/v1/application-bot/handle", applicationBotHandler.Handle)
 
-	log.Println("port is: " + os.Getenv("REST_API_PORT"))
-
 	router.Run(fmt.Sprintf(":%s", os.Getenv("REST_API_PORT")))
 }
