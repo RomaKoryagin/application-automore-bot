@@ -6,11 +6,13 @@ import (
 	"os"
 
 	"alex.com/application-bot/internal/application/factories"
+	"alex.com/application-bot/internal/application/handlers"
 	"alex.com/application-bot/internal/application/jobs"
 	"alex.com/application-bot/internal/application/services"
 	"alex.com/application-bot/internal/application/strategies"
 	"alex.com/application-bot/internal/infrastructure/repositories"
 	"alex.com/application-bot/internal/infrastructure/sqlite"
+	"github.com/gin-gonic/gin"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
 )
@@ -73,35 +75,21 @@ func main() {
 	strategyResolver.AddStrategy(noActiveApplicationStrategy)
 	/** end resolvers */
 
+	/** services */
 	telegramMessageService := services.NewTelegramMessageService(bot, strategyResolver)
+	/** end services */
 
-	log.Printf("Authorized on account %s", bot.Self.UserName)
+	/** handlers */
+	applicationBotHandler := handlers.NewApplicationBotHandler(telegramMessageService)
+	/** end handlers */
 
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
-
-	updates := bot.GetUpdatesChan(u)
-
-	// @TODO
 	jobs.NewSendTelegramApplicationJob(applicationService, bot, telegramGroupName).Execute()
 
-	for update := range updates {
-		var msg string
-		var chatId int64
-		var username string
+	router := gin.Default()
 
-		if update.CallbackQuery != nil {
-			chatId = update.CallbackQuery.From.ID
-			msg = update.CallbackQuery.Data
-			username = update.CallbackQuery.From.UserName
-		}
+	router.POST("/v1/application-bot/handle", applicationBotHandler.Handle)
 
-		if update.Message != nil {
-			msg = update.Message.Text
-			chatId = update.Message.Chat.ID
-			username = update.Message.From.UserName
-		}
+	log.Println("port is: " + os.Getenv("REST_API_PORT"))
 
-		go telegramMessageService.SendReplyMessage(chatId, username, msg)
-	}
+	router.Run(fmt.Sprintf(":%s", os.Getenv("REST_API_PORT")))
 }
