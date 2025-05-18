@@ -52,7 +52,7 @@ func (strategy NewApplicationStrategy) Handle(chatId int64, telegramId string, t
 		}
 	}
 
-	return factories.CountryStepMessageFactory{}.CreateMessage(chatId), nil
+	return factories.NewCountryStepMessageFactory().CreateMessage(chatId), nil
 }
 
 func (strategy NewApplicationStrategy) GetKey() enums.StrategyType {

@@ -7,18 +7,18 @@ import (
 type CountryStepMessageFactory struct {
 }
 
-func (factory CountryStepMessageFactory) CreateMessage(chatId int64) *tgbotapi.MessageConfig {
+func (factory *CountryStepMessageFactory) CreateMessage(chatId int64) *tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(chatId, "Приветствует Вас ! Спасибо за обращение в компанию «AUTOMORE»  (Автоморе) !Мы занимаемся доставкой автомобилей ведущих мировых автопроизводителей, включая европейских, и стран Азии.Подберём. Проверим. Доставим. Оформим. Как для себя!Пожалуйста, выберите из списка страну, где хотите приобрести автомобиль:")
 
 	countriesKeyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("Япония", "Япония"),
+			tgbotapi.NewInlineKeyboardButtonData("Япония", "/japan"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("Корея", "Корея"),
+			tgbotapi.NewInlineKeyboardButtonData("Корея", "/korea"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("Китай", "Китай"),
+			tgbotapi.NewInlineKeyboardButtonData("Китай", "/china"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("ГЛАВНОЕ МЕНЮ", "/menu"),
@@ -28,4 +28,8 @@ func (factory CountryStepMessageFactory) CreateMessage(chatId int64) *tgbotapi.M
 	msg.ReplyMarkup = countriesKeyboard
 
 	return &msg
+}
+
+func NewCountryStepMessageFactory() *CountryStepMessageFactory {
+	return &CountryStepMessageFactory{}
 }

@@ -26,8 +26,9 @@ func (service TelegramMessageService) SendReplyMessage(chatId int64, telegramId 
 	strategy := service.StrategyResolver.Resolve(chatId, text)
 
 	msg, _ := strategy.Handle(chatId, telegramId, text)
-
-	service.Bot.Send(msg)
+	if msg != nil {
+		service.Bot.Send(msg)
+	}
 }
 
 func NewTelegramMessageService(

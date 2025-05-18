@@ -60,6 +60,9 @@ func main() {
 	aboutCommandStrategy := strategies.NewAboutCommandStrategy()
 	noActiveApplicationStrategy := strategies.NewNoActiveApplicationStrategy()
 	newApplicationStrategy := strategies.NewNewApplicationStrategy(userService, applicationService)
+	countryReturnComamandStrategy := strategies.NewCountryReturnCommandStrategy()
+	updateCountryCommandStrategy := strategies.NewUpdateCountryStrategy(userService, applicationService)
+	japanWarningCommandStrategy := strategies.NewJapanWarningCommandStrategy()
 	menuCommandStrategy := strategies.NewMenuCommandStrategy()
 	/** end strategies */
 
@@ -73,6 +76,9 @@ func main() {
 	strategyResolver.AddStrategy(aboutCommandStrategy)
 	strategyResolver.AddStrategy(newApplicationStrategy)
 	strategyResolver.AddStrategy(noActiveApplicationStrategy)
+	strategyResolver.AddStrategy(countryReturnComamandStrategy)
+	strategyResolver.AddStrategy(updateCountryCommandStrategy)
+	strategyResolver.AddStrategy(japanWarningCommandStrategy)
 	/** end resolvers */
 
 	/** services */

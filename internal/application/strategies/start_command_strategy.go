@@ -57,7 +57,7 @@ func (strategy StartCommandStategy) Handle(chatId int64, telegramId string, text
 		}
 	}
 
-	return factories.CountryStepMessageFactory{}.CreateMessage(chatId), nil
+	return factories.NewCountryStepMessageFactory().CreateMessage(chatId), nil
 }
 
 func (strategy StartCommandStategy) GetKey() enums.StrategyType {

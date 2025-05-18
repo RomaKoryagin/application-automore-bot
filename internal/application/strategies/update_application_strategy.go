@@ -53,24 +53,10 @@ func (strategy UpdateApplicationStategy) Handle(chatId int64, telegramId string,
 	value.Valid = true
 	value.String = text
 	switch stepType {
-	case enums.Country:
-		appl.Country = value
-		if value.String == "Япония" {
-			stepType = enums.JapanWarning
-		}
 	case enums.City:
 		appl.City = value
 	case enums.Budget:
 		appl.Budget = value
-	case enums.JapanWarning:
-		if text != "Вернуться к выбору страны" {
-			appl.SteeringWheelType = value
-			stepType = enums.City
-		} else {
-			value.Valid = false
-			appl.SteeringWheelType = value
-			appl.Country = value
-		}
 	case enums.MarkOrConditions:
 		appl.MarkOrConditions = value
 	case enums.PersonPhone:
@@ -87,9 +73,7 @@ func (strategy UpdateApplicationStategy) Handle(chatId int64, telegramId string,
 
 	var resultStep enums.StepType
 	if isValid {
-		if stepType != enums.JapanWarning {
-			appl.Step++
-		}
+		appl.Step++
 		err = strategy.ApplicationService.Update(appl)
 		if err != nil {
 			log.Printf("error while trying to update application, more: %s", err)

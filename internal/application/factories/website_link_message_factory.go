@@ -8,7 +8,7 @@ type WebsiteLinkMessageFactory struct {
 }
 
 func (factory WebsiteLinkMessageFactory) CreateMessage(chatId int64) *tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(chatId, "https://ya.ru")
+	msg := tgbotapi.NewMessage(chatId, "https://auto-more.ru/")
 
 	replyKeyboard := tgbotapi.NewRemoveKeyboard(true)
 	msg.ReplyMarkup = replyKeyboard

@@ -12,14 +12,18 @@ func (factory JapanWarningMessageFactory) CreateMessage(chatId int64) *tgbotapi.
 
 	replyKeyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("Вернуться к выбору страны", "Вернуться к выбору страны"),
+			tgbotapi.NewInlineKeyboardButtonData("Вернуться к выбору страны", "/return-country-step"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("Расположение руля справа", "Расположение руля справа"),
+			tgbotapi.NewInlineKeyboardButtonData("Расположение руля справа", "/submit-right-wheeling-type"),
 		),
 	)
 
 	msg.ReplyMarkup = replyKeyboard
 
 	return &msg
+}
+
+func NewJapanWarningMessageFactory() *JapanWarningMessageFactory {
+	return &JapanWarningMessageFactory{}
 }

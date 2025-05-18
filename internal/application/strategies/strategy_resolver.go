@@ -39,24 +39,23 @@ func (resolver StrategyResolver) Resolve(chatId int64, text string) IMessageStra
 		sType = enums.NoActiveApplication
 	}
 
-	if text == "/menu" {
+	switch text {
+	case "/menu":
 		sType = enums.ShowMenu
-	}
-
-	if text == "/start" {
+	case "/start":
 		sType = enums.Start
-	}
-
-	if text == "/link" {
+	case "/link":
 		sType = enums.WebsiteLink
-	}
-
-	if text == "/newapplication" {
+	case "/newapplication":
 		sType = enums.NewApplication
-	}
-
-	if text == "/about" {
+	case "/about":
 		sType = enums.About
+	case "/korea", "/china", "/submit-right-wheeling-type":
+		sType = enums.CountryResolving
+	case "/japan":
+		sType = enums.JapanWheelWarning
+	case "/return-country-step":
+		sType = enums.CountryReturn
 	}
 
 	log.Println("type " + sType)

@@ -14,3 +14,7 @@ func (factory CityStepMessageFactory) CreateMessage(chatId int64) *tgbotapi.Mess
 
 	return &msg
 }
+
+func NewCityStepMessageFactory() *CityStepMessageFactory {
+	return &CityStepMessageFactory{}
+}
