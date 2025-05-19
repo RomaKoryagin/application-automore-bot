@@ -8,7 +8,7 @@ type JapanWarningMessageFactory struct {
 }
 
 func (factory JapanWarningMessageFactory) CreateMessage(chatId int64) *tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(chatId, "У всех АВТО в Японии, рулевая колонка расположена справа. Поэтому, если вы хотите японский авто, но с рулевой колонкой, расположенной слева, то пройдите в раздел Корея или Китай.")
+	msg := tgbotapi.NewMessage(chatId, "У всех автомобилей из Японии, рулевая колонка расположена справа.\nЕсли вы хотите автомобиль японской марки, но с рулевой колонкой слева, перейдите в раздел Корея или Китай")
 
 	replyKeyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
