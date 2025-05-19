@@ -8,7 +8,7 @@ type CityStepMessageFactory struct {
 }
 
 func (factory CityStepMessageFactory) CreateMessage(chatId int64) *tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(chatId, "Ваш город")
+	msg := tgbotapi.NewMessage(chatId, "Укажите Ваш город, чтобы мы могли учитывать часовой пояс")
 	replyKeyboard := tgbotapi.NewRemoveKeyboard(true)
 	msg.ReplyMarkup = replyKeyboard
 

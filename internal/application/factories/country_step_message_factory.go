@@ -8,7 +8,7 @@ type CountryStepMessageFactory struct {
 }
 
 func (factory *CountryStepMessageFactory) CreateMessage(chatId int64) *tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(chatId, "Приветствуем Вас ! Спасибо за обращение в компанию «AUTOMORE»  (АвтоМоре) ! Мы занимаемся доставкой автомобилей ведущих мировых автопроизводителей, включая европейских, и стран Азии.Подберём. Проверим. Доставим. Оформим. Как для себя! Пожалуйста, выберите из списка страну, где хотите приобрести автомобиль:")
+	msg := tgbotapi.NewMessage(chatId, "Приветствуем Вас ! Спасибо за обращение в компанию «AUTOMORE»  (АвтоМоре) ! Мы занимаемся доставкой автомобилей ведущих мировых автопроизводителей, включая европейских, и стран Азии. Подберём. Проверим. Доставим. Оформим. Как для себя! Пожалуйста, выберите из списка страну, где хотите приобрести автомобиль:")
 
 	countriesKeyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
